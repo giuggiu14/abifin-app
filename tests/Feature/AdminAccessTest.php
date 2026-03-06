@@ -24,8 +24,7 @@ class AdminAccessTest extends TestCase
         }) -> middleware(EnsureUserIsAdmin::class);
     }
 
-    /** @test */
-    public function block_non_admin_users()
+    public function test_block_non_admin_users()
     {
         $user = User::factory()->create(['role' => UserRole::CLIENT]);
         $this->assertFalse($user->isAdmin());
@@ -35,8 +34,7 @@ class AdminAccessTest extends TestCase
              ->assertStatus(403);
     }
 
-    /** @test */
-    public function allow_admin_users()
+    public function test_allow_admin_users()
     {
         $user = User::factory()->create(['role' => UserRole::ADMIN]);
         $this->assertTrue($user->isAdmin());
