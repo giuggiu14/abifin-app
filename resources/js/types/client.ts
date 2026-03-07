@@ -1,5 +1,5 @@
 export interface Client {
-    id: number;
+    id?: number;
     company_name: string;
     email: string;
     phone: string;
@@ -7,7 +7,7 @@ export interface Client {
     vat_number: string;
 }
 
-export const columns= [
+export const columns = [
     {
         key: 'id',
         label: 'ID',
@@ -31,5 +31,9 @@ export const columns= [
     {
         key: 'vat_number',
         label: 'VAT Number',
+    },
+    {
+        key: 'actions',
+        label: ''
     },
 ];
