@@ -11,7 +11,7 @@ Route::inertia('/', 'welcome', [
 
 Route::get('dashboard', [AdminController::class, 'dashboard'])
     ->middleware(['auth'])
-    ->name('admin.dashboard');
+    ->name('dashboard');
 
 Route::get('clients', [AdminController::class, 'clients'])
     ->middleware(['auth', 'admin'])
