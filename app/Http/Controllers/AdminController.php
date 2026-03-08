@@ -8,6 +8,7 @@ use App\Models\Paperwork;
 use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
@@ -76,9 +77,19 @@ class AdminController extends Controller
 
     public function dashboard()
     {
-        return Inertia::render('admin/dashboard', [
-            'clients' => Client::orderBy('created_at', 'desc')->get(),
-            'paperworks' => Paperwork::orderBy('created_at', 'desc')->get(),
-        ]);
+        $user = Auth::user();
+        if ($user->isAdmin())
+        {
+            return Inertia::render('admin/dashboard', [
+                'clients' => Client::orderBy('created_at', 'desc')->get(),
+                'paperworks' => Paperwork::orderBy('created_at', 'desc')->get(),
+            ]);
+        }
+        else
+        {
+            return Inertia::render('dashboard', [
+                'paperworks' => Paperwork::with('client')->orderBy('created_at', 'desc')->get(),
+            ]);
+        }
     }
 }

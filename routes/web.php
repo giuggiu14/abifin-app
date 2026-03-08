@@ -9,12 +9,8 @@ Route::inertia('/', 'welcome', [
     'canRegister' => Features::enabled(Features::registration()),
 ])->name('home');
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'dashboard')->name('dashboard');
-});
-
 Route::get('dashboard', [AdminController::class, 'dashboard'])
-    ->middleware(['auth', 'admin'])
+    ->middleware(['auth'])
     ->name('admin.dashboard');
 
 Route::get('clients', [AdminController::class, 'clients'])
