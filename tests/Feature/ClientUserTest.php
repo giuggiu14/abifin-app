@@ -28,5 +28,5 @@ class ClientUserTest extends TestCase
     {
         $user = User::factory()->create();
         $this->assertNull($user->client);
-    }   
+    }
 }

@@ -1,7 +1,14 @@
-import { Paperwork, PaperworkFormData } from "@/types/paperwork";
-import { Button, Form, Input, ModalBody, ModalFooter, Textarea } from "@heroui/react";
-import { useForm } from "@inertiajs/react";
-import { useEffect } from "react";
+import {
+    Button,
+    Form,
+    Input,
+    ModalBody,
+    ModalFooter,
+    Textarea,
+} from '@heroui/react';
+import type { useForm } from '@inertiajs/react';
+import { useEffect } from 'react';
+import type { Paperwork, PaperworkFormData } from '@/types/paperwork';
 
 interface PaperworkFormProps {
     form: ReturnType<typeof useForm<PaperworkFormData>>;
@@ -10,17 +17,22 @@ interface PaperworkFormProps {
     onClose: () => void;
 }
 
-export const PaperworkForm = ({ form, initialData, onSave, onClose }: PaperworkFormProps) => {
+export const PaperworkForm = ({
+    form,
+    initialData,
+    onSave,
+    onClose,
+}: PaperworkFormProps) => {
     const { data, setData } = form;
 
     useEffect(() => {
         if (initialData) {
             setData({
-                'title': initialData.title,
-                'description': initialData.description,
+                title: initialData.title,
+                description: initialData.description,
             });
         }
-    }, [initialData]);
+    }, [initialData, setData]);
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -29,12 +41,9 @@ export const PaperworkForm = ({ form, initialData, onSave, onClose }: PaperworkF
     };
 
     return (
-        <Form
-            onSubmit={handleSubmit}
-            className="w-full"
-        >
+        <Form onSubmit={handleSubmit} className="w-full">
             <ModalBody>
-                <div className="flex flex-col gap-4 w-full">
+                <div className="flex w-full flex-col gap-4">
                     <Input
                         name="title"
                         label="Titolo"
@@ -58,13 +67,10 @@ export const PaperworkForm = ({ form, initialData, onSave, onClose }: PaperworkF
                 <Button variant="flat" onPress={onClose}>
                     Annulla
                 </Button>
-                <Button
-                    color="primary"
-                    type="submit"
-                >
-                    {initialData ? "Aggiorna" : "Salva"}
+                <Button color="primary" type="submit">
+                    {initialData ? 'Aggiorna' : 'Salva'}
                 </Button>
             </ModalFooter>
         </Form>
     );
-}
+};

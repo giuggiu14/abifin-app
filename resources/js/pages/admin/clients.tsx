@@ -1,13 +1,30 @@
-import AppLayout from "@/layouts/app-layout";
-import { clients } from "@/routes/admin";
-import { BreadcrumbItem } from "@/types";
-import { Client, ClientFormData, columns } from "@/types/client";
-import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip, useDisclosure } from "@heroui/react";
-import { Head, router, useForm } from "@inertiajs/react";
-import { Eye, Paperclip, Plus, Trash2 } from "lucide-react";
-import { useCallback, useState } from "react";
-import { ClientForm } from "./client";
-import { paperworks } from "@/routes";
+import {
+    Button,
+    Modal,
+    ModalBody,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    Spinner,
+    Table,
+    TableBody,
+    TableCell,
+    TableColumn,
+    TableHeader,
+    TableRow,
+    Tooltip,
+    useDisclosure,
+} from '@heroui/react';
+import { Head, router, useForm } from '@inertiajs/react';
+import { Eye, Paperclip, Plus, Trash2 } from 'lucide-react';
+import { useCallback, useState } from 'react';
+import AppLayout from '@/layouts/app-layout';
+import { paperworks } from '@/routes';
+import { clients } from '@/routes/admin';
+import type { BreadcrumbItem } from '@/types';
+import type { Client, ClientFormData } from '@/types/client';
+import { columns } from '@/types/client';
+import { ClientForm } from './client';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -16,7 +33,9 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Clients({ listClients }: Readonly<{ listClients: Client[] }>) {
+export default function Clients({
+    listClients,
+}: Readonly<{ listClients: Client[] }>) {
     const [selectedClient, setSelectedClient] = useState<Client | undefined>();
     const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
     const confirmDeleteModal = useDisclosure();
@@ -28,60 +47,71 @@ export default function Clients({ listClients }: Readonly<{ listClients: Client[
         vat_number: '',
     });
 
-    const handleOpenModal = (client?: Client) => {
-        setSelectedClient(client);
-        onOpen();
-    };
+    const handleOpenModal = useCallback(
+        (client?: Client) => {
+            setSelectedClient(client);
+            onOpen();
+        },
+        [onOpen, setSelectedClient],
+    );
 
-    const renderCell = useCallback((item: Client, columnKey: React.Key) => {
-        const cellValue = item[columnKey as keyof Client];
+    const renderCell = useCallback(
+        (item: Client, columnKey: React.Key) => {
+            const cellValue = item[columnKey as keyof Client];
 
-        if (columnKey === "actions") {
-            return (
-                <div className="relative flex items-center gap-2">
-                    <Tooltip content="Dettagli">
-                        <Button
-                            endContent={<Eye />}
-                            color="secondary"
-                            onPress={() => handleOpenModal(item)}
-                        />
-                    </Tooltip>
-                    <Tooltip color="danger" content="Elimina">
-                        <Button
-                            color="danger"
-                            endContent={<Trash2 />}
-                            onPress={() => {
-                                setSelectedClient(item);
-                                confirmDeleteModal.onOpen()
-                            }}
-                        />
-                    </Tooltip>
-                    <Tooltip color="primary" content="Vedi Pratiche Cliente">
-                        <Button
+            if (columnKey === 'actions') {
+                return (
+                    <div className="relative flex items-center gap-2">
+                        <Tooltip content="Dettagli">
+                            <Button
+                                endContent={<Eye />}
+                                color="secondary"
+                                onPress={() => handleOpenModal(item)}
+                            />
+                        </Tooltip>
+                        <Tooltip color="danger" content="Elimina">
+                            <Button
+                                color="danger"
+                                endContent={<Trash2 />}
+                                onPress={() => {
+                                    setSelectedClient(item);
+                                    confirmDeleteModal.onOpen();
+                                }}
+                            />
+                        </Tooltip>
+                        <Tooltip
                             color="primary"
-                            endContent={<Paperclip />}
-                            onPress={
-                                () => router.visit(paperworks(item.id ? item.id : 0))
-                            }
-                        />
-                    </Tooltip>
-                </div>
-            );
-        } else {
-            return cellValue;
-        }
-    }, []);
+                            content="Vedi Pratiche Cliente"
+                        >
+                            <Button
+                                color="primary"
+                                endContent={<Paperclip />}
+                                onPress={() =>
+                                    router.visit(
+                                        paperworks(item.id ? item.id : 0),
+                                    )
+                                }
+                            />
+                        </Tooltip>
+                    </div>
+                );
+            } else {
+                return cellValue;
+            }
+        },
+        [confirmDeleteModal, handleOpenModal],
+    );
 
     const handleDelete = () => {
         if (selectedClient) {
-            console.log("Deleting...");
+            console.log('Deleting...');
             form.delete(`/clients/${selectedClient.id}`, {
                 onSuccess: () => {
                     confirmDeleteModal.onClose();
-                }
+                },
             });
         }
-    }
+    };
 
     const handleSave = () => {
         if (selectedClient) {
@@ -94,7 +124,7 @@ export default function Clients({ listClients }: Readonly<{ listClients: Client[
             form.post('/clients', {
                 onSuccess: () => {
                     onClose();
-                }
+                },
             });
         }
     };
@@ -102,8 +132,8 @@ export default function Clients({ listClients }: Readonly<{ listClients: Client[
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Clients" />
-            <div className="p-8 flex flex-col gap-4">
-                <div className="flex justify-end items-center">
+            <div className="flex flex-col gap-4 p-8">
+                <div className="flex items-center justify-end">
                     <div className="flex gap-3">
                         <Button
                             color="primary"
@@ -116,7 +146,11 @@ export default function Clients({ listClients }: Readonly<{ listClients: Client[
                 </div>
                 <Table aria-label="Tabella clienti">
                     <TableHeader columns={columns}>
-                        {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
+                        {(column) => (
+                            <TableColumn key={column.key}>
+                                {column.label}
+                            </TableColumn>
+                        )}
                     </TableHeader>
                     <TableBody
                         items={listClients}
@@ -125,20 +159,23 @@ export default function Clients({ listClients }: Readonly<{ listClients: Client[
                     >
                         {(item) => (
                             <TableRow key={item.id}>
-                                {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
+                                {(columnKey) => (
+                                    <TableCell>
+                                        {renderCell(item, columnKey)}
+                                    </TableCell>
+                                )}
                             </TableRow>
                         )}
                     </TableBody>
                 </Table>
             </div>
-            <Modal
-                isOpen={isOpen}
-                onOpenChange={onOpenChange}
-            >
+            <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
                 <ModalContent>
                     {(onClose) => (
                         <>
-                            <ModalHeader>{selectedClient ? "Modifica" : "Nuovo"} Cliente</ModalHeader>
+                            <ModalHeader>
+                                {selectedClient ? 'Modifica' : 'Nuovo'} Cliente
+                            </ModalHeader>
                             <ClientForm
                                 form={form}
                                 initialData={selectedClient}
@@ -157,17 +194,15 @@ export default function Clients({ listClients }: Readonly<{ listClients: Client[
                     <ModalHeader>
                         Sei sicuro di voler cancellare il cliente?
                     </ModalHeader>
-                    <ModalBody>
-
-                    </ModalBody>
+                    <ModalBody></ModalBody>
                     <ModalFooter>
-                        <Button variant="flat" onPress={confirmDeleteModal.onClose}>
+                        <Button
+                            variant="flat"
+                            onPress={confirmDeleteModal.onClose}
+                        >
                             Annulla
                         </Button>
-                        <Button
-                            color="danger"
-                            onPress={() => handleDelete()}
-                        >
+                        <Button color="danger" onPress={() => handleDelete()}>
                             Conferma
                         </Button>
                     </ModalFooter>

@@ -16,7 +16,7 @@ class Paperwork extends Model
     protected function casts(): array
     {
         return [
-            'status' => PaperworkStatus::class
+            'status' => PaperworkStatus::class,
         ];
     }
 

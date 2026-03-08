@@ -35,7 +35,7 @@ export const columns = [
     },
     {
         key: 'actions',
-        label: ''
+        label: '',
     },
 ];
 

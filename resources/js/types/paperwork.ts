@@ -4,7 +4,7 @@ export interface Paperwork {
     description?: string;
     createdAt: string;
     status: 'open' | 'closed' | 'pending';
-};
+}
 
 export const columns = [
     {
@@ -17,15 +17,15 @@ export const columns = [
     },
     {
         key: 'description',
-        label:'Description',
+        label: 'Description',
     },
     {
         key: 'created_at',
-        label: 'Insert At'
+        label: 'Insert At',
     },
     {
         key: 'status',
-        label: 'Status'
+        label: 'Status',
     },
     {
         key: 'actions',
@@ -33,10 +33,10 @@ export const columns = [
     },
 ];
 
-export const chipColors: { [key: string]: "danger" | "success" | "warning" } = {
-    open: "danger",
-    closed: "success",
-    pending: "warning",
-}
+export const chipColors: { [key: string]: 'danger' | 'success' | 'warning' } = {
+    open: 'danger',
+    closed: 'success',
+    pending: 'warning',
+};
 
 export type PaperworkFormData = Omit<Paperwork, 'createdAt' | 'status'>;

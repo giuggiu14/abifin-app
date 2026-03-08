@@ -1,7 +1,7 @@
-import { Client, ClientFormData } from "@/types/client";
-import { Button, Form, Input, ModalBody, ModalFooter } from "@heroui/react";
-import { useForm } from "@inertiajs/react";
-import { useEffect } from "react";
+import { Button, Form, Input, ModalBody, ModalFooter } from '@heroui/react';
+import type { useForm } from '@inertiajs/react';
+import { useEffect } from 'react';
+import type { Client, ClientFormData } from '@/types/client';
 
 interface ClientFormProps {
     form: ReturnType<typeof useForm<ClientFormData>>;
@@ -10,20 +10,25 @@ interface ClientFormProps {
     onClose: () => void;
 }
 
-export const ClientForm = ({ form, initialData, onSave, onClose }: ClientFormProps) => {
+export const ClientForm = ({
+    form,
+    initialData,
+    onSave,
+    onClose,
+}: ClientFormProps) => {
     const { data, setData } = form;
 
     useEffect(() => {
         if (initialData) {
-                setData({
-                'company_name': initialData.company_name,
-                'email': initialData.email,
-                'address': initialData.address,
-                'phone': initialData.phone,
-                'vat_number': initialData.vat_number,
+            setData({
+                company_name: initialData.company_name,
+                email: initialData.email,
+                address: initialData.address,
+                phone: initialData.phone,
+                vat_number: initialData.vat_number,
             });
         }
-    }, [initialData]);
+    }, [initialData, setData]);
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -32,12 +37,9 @@ export const ClientForm = ({ form, initialData, onSave, onClose }: ClientFormPro
     };
 
     return (
-        <Form
-            onSubmit={handleSubmit}
-            className="w-full"
-        >
+        <Form onSubmit={handleSubmit} className="w-full">
             <ModalBody>
-                <div className="flex flex-col gap-4 w-full">
+                <div className="flex w-full flex-col gap-4">
                     <Input
                         name="company_name"
                         label="Ragione sociale"
@@ -90,13 +92,10 @@ export const ClientForm = ({ form, initialData, onSave, onClose }: ClientFormPro
                 <Button variant="flat" onPress={onClose}>
                     Annulla
                 </Button>
-                <Button
-                    color="primary"
-                    type="submit"
-                >
-                    {initialData ? "Aggiorna" : "Salva"}
+                <Button color="primary" type="submit">
+                    {initialData ? 'Aggiorna' : 'Salva'}
                 </Button>
             </ModalFooter>
         </Form>
     );
-}
+};
