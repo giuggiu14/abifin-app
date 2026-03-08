@@ -1,7 +1,7 @@
 import { Client } from "@/types/client";
 import { Button, Form, Input, ModalBody, ModalFooter } from "@heroui/react";
 import { useForm } from "@inertiajs/react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 interface ClientFormProps {
     form: ReturnType<typeof useForm<Client>>;
@@ -11,19 +11,19 @@ interface ClientFormProps {
 }
 
 export const ClientForm = ({ form, initialData, onSave, onClose }: ClientFormProps) => {
-    const { data, setData, errors, processing } = form;
+    const { data, setData } = form;
 
-    if (initialData) {
-        useEffect(() => {
-            setData({
+    useEffect(() => {
+        if (initialData) {
+                setData({
                 'company_name': initialData.company_name,
                 'email': initialData.email,
                 'address': initialData.address,
                 'phone': initialData.phone,
                 'vat_number': initialData.vat_number,
             });
-        }, [initialData]);
-    }
+        }
+    }, [initialData]);
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
