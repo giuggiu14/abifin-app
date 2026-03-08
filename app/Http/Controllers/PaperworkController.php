@@ -14,6 +14,8 @@ class PaperworkController extends Controller
     use AuthorizesRequests;
 
     public function paperworks(Client $client) {
+        $this->authorize('viewAny', [Paperwork::class, $client]);
+
         $client->load('paperworks');
         return Inertia::render('paperwork/main', [
             'listPaperworks' => $client->paperworks,
@@ -34,7 +36,7 @@ class PaperworkController extends Controller
         $paperwork->save();
     }
 
-    public function update(Request $request, Paperwork $paperwork)
+    public function update(Request $request, Client $client, Paperwork $paperwork)
     {
         $this->authorize('update', $paperwork);
 

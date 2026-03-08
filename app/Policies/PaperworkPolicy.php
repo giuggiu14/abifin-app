@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\Client;
 use App\Models\Paperwork;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
@@ -11,9 +12,9 @@ class PaperworkPolicy
     /**
      * Determine whether the user can view any models.
      */
-    public function viewAny(User $user): bool
+    public function viewAny(User $user, Client $client): bool
     {
-        return false;
+        return $user->isAdmin() || $user->id === $client->user_id;
     }
 
     /**
@@ -21,7 +22,7 @@ class PaperworkPolicy
      */
     public function view(User $user, Paperwork $paperwork): bool
     {
-        return false;
+        return $user->isAdmin() || $user->id === $paperwork->client->user_id;
     }
 
     /**
