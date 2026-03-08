@@ -1,76 +1,110 @@
-import AppLayout from "@/layouts/app-layout";
-import { paperworks } from "@/routes";
-import { chipColors, columns, Paperwork, PaperworkFormData } from "@/types/paperwork";
-import { Button, Chip, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip, useDisclosure } from "@heroui/react";
-import { Head, useForm } from "@inertiajs/react";
-import { Eye, Plus, Trash2 } from "lucide-react";
-import { useCallback, useState } from "react";
-import { PaperworkForm } from "./paperwork";
-import { Client } from "@/types/client";
+import {
+    Button,
+    Chip,
+    Modal,
+    ModalBody,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    Spinner,
+    Table,
+    TableBody,
+    TableCell,
+    TableColumn,
+    TableHeader,
+    TableRow,
+    Tooltip,
+    useDisclosure,
+} from '@heroui/react';
+import { Head, useForm } from '@inertiajs/react';
+import { Eye, Plus, Trash2 } from 'lucide-react';
+import { useCallback, useState } from 'react';
+import AppLayout from '@/layouts/app-layout';
+import { paperworks } from '@/routes';
+import type { Client } from '@/types/client';
+import { chipColors, columns } from '@/types/paperwork';
+import type { Paperwork, PaperworkFormData } from '@/types/paperwork';
+import { PaperworkForm } from './paperwork';
 
-export default function Paperworks({ listPaperworks, client, can } : Readonly<{ listPaperworks: Paperwork[], client: Client, can: { doActions: boolean, create: boolean } }>) {
-    const [selectedPaperwork, setSelectedPaperwork] = useState<Paperwork | undefined>();
-    const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure();
+export default function Paperworks({
+    listPaperworks,
+    client,
+    can,
+}: Readonly<{
+    listPaperworks: Paperwork[];
+    client: Client;
+    can: { doActions: boolean; create: boolean };
+}>) {
+    const [selectedPaperwork, setSelectedPaperwork] = useState<
+        Paperwork | undefined
+    >();
+    const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
     const confirmDeleteModal = useDisclosure();
     const form = useForm<PaperworkFormData>({
         title: '',
     });
 
-    const basePath = paperworks(client.id?client.id:0).url;
+    const basePath = paperworks(client.id ? client.id : 0).url;
 
-    const handleOpenModal = (paperwork?: Paperwork) => {
-        setSelectedPaperwork(paperwork);
-        onOpen();
-    };
+    const handleOpenModal = useCallback(
+        (paperwork?: Paperwork) => {
+            setSelectedPaperwork(paperwork);
+            onOpen();
+        },
+        [onOpen, setSelectedPaperwork],
+    );
 
-    const renderCell = useCallback((item: Paperwork, columnKey: React.Key) => {
-        const cellValue = item[columnKey as keyof Paperwork];
+    const renderCell = useCallback(
+        (item: Paperwork, columnKey: React.Key) => {
+            const cellValue = item[columnKey as keyof Paperwork];
 
-        if (columnKey==="actions" && can.doActions) {
-            return (
-                <div className="relative flex items-center gap-2">
-                    <Tooltip content="Dettagli">
-                        <Button
-                            endContent={<Eye />}
-                            color="secondary"
-                            onPress={() => handleOpenModal(item)}
-                        />
-                    </Tooltip>
-                    <Tooltip color="danger" content="Elimina">
-                        <Button
-                            color="danger"
-                            endContent={<Trash2 />}
-                            onPress={() => {
-                                setSelectedPaperwork(item);
-                                confirmDeleteModal.onOpen()
-                            }}
-                        />
-                    </Tooltip>
-                </div>
-            );
-        } else if (columnKey === "status") {
-            return (
-                <Chip
-                    color={chipColors[cellValue as keyof typeof chipColors]}
-                    variant="flat"
-                >
-                    {cellValue?.toString().toUpperCase()}
-                </Chip>
-            );
-        } else {
-            return cellValue;
-        }
-    }, []);
+            if (columnKey === 'actions' && can.doActions) {
+                return (
+                    <div className="relative flex items-center gap-2">
+                        <Tooltip content="Dettagli">
+                            <Button
+                                endContent={<Eye />}
+                                color="secondary"
+                                onPress={() => handleOpenModal(item)}
+                            />
+                        </Tooltip>
+                        <Tooltip color="danger" content="Elimina">
+                            <Button
+                                color="danger"
+                                endContent={<Trash2 />}
+                                onPress={() => {
+                                    setSelectedPaperwork(item);
+                                    confirmDeleteModal.onOpen();
+                                }}
+                            />
+                        </Tooltip>
+                    </div>
+                );
+            } else if (columnKey === 'status') {
+                return (
+                    <Chip
+                        color={chipColors[cellValue as keyof typeof chipColors]}
+                        variant="flat"
+                    >
+                        {cellValue?.toString().toUpperCase()}
+                    </Chip>
+                );
+            } else {
+                return cellValue;
+            }
+        },
+        [can.doActions, confirmDeleteModal, handleOpenModal],
+    );
 
     const handleDelete = () => {
         if (selectedPaperwork) {
             form.delete(`${basePath}/${selectedPaperwork.id}`, {
                 onSuccess: () => {
                     confirmDeleteModal.onClose();
-                }
+                },
             });
         }
-    }
+    };
 
     const handleSave = () => {
         if (selectedPaperwork) {
@@ -83,7 +117,7 @@ export default function Paperworks({ listPaperworks, client, can } : Readonly<{ 
             form.post(basePath, {
                 onSuccess: () => {
                     onClose();
-                }
+                },
             });
         }
     };
@@ -91,25 +125,27 @@ export default function Paperworks({ listPaperworks, client, can } : Readonly<{ 
     return (
         <AppLayout>
             <Head title="Pratiche" />
-            <div className="p-8 flex flex-col gap-4">
-                {
-                    can.create && (
-                        <div className="flex justify-end items-center">
-                            <div className="flex gap-3">
-                                <Button
-                                    color="primary"
-                                    endContent={<Plus />}
-                                    onPress={() => handleOpenModal()}
-                                >
-                                    Add
-                                </Button>
-                            </div>
+            <div className="flex flex-col gap-4 p-8">
+                {can.create && (
+                    <div className="flex items-center justify-end">
+                        <div className="flex gap-3">
+                            <Button
+                                color="primary"
+                                endContent={<Plus />}
+                                onPress={() => handleOpenModal()}
+                            >
+                                Add
+                            </Button>
                         </div>
-                    )
-                }
+                    </div>
+                )}
                 <Table aria-label="Tabella Pratiche">
                     <TableHeader columns={columns}>
-                        {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
+                        {(column) => (
+                            <TableColumn key={column.key}>
+                                {column.label}
+                            </TableColumn>
+                        )}
                     </TableHeader>
                     <TableBody
                         items={listPaperworks}
@@ -118,20 +154,24 @@ export default function Paperworks({ listPaperworks, client, can } : Readonly<{ 
                     >
                         {(item) => (
                             <TableRow key={item.id}>
-                                {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
+                                {(columnKey) => (
+                                    <TableCell>
+                                        {renderCell(item, columnKey)}
+                                    </TableCell>
+                                )}
                             </TableRow>
                         )}
                     </TableBody>
                 </Table>
             </div>
-            <Modal
-                isOpen={isOpen}
-                onOpenChange={onOpenChange}
-            >
+            <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
                 <ModalContent>
                     {(onClose) => (
                         <>
-                            <ModalHeader>{selectedPaperwork ? "Modifica" : "Nuovo"} Pratica</ModalHeader>
+                            <ModalHeader>
+                                {selectedPaperwork ? 'Modifica' : 'Nuovo'}{' '}
+                                Pratica
+                            </ModalHeader>
                             <PaperworkForm
                                 form={form}
                                 initialData={selectedPaperwork}
@@ -150,17 +190,15 @@ export default function Paperworks({ listPaperworks, client, can } : Readonly<{ 
                     <ModalHeader>
                         Sei sicuro di voler cancellare il cliente?
                     </ModalHeader>
-                    <ModalBody>
-
-                    </ModalBody>
+                    <ModalBody></ModalBody>
                     <ModalFooter>
-                        <Button variant="flat" onPress={confirmDeleteModal.onClose}>
+                        <Button
+                            variant="flat"
+                            onPress={confirmDeleteModal.onClose}
+                        >
                             Annulla
                         </Button>
-                        <Button
-                            color="danger"
-                            onPress={ () => handleDelete() }
-                        >
+                        <Button color="danger" onPress={() => handleDelete()}>
                             Conferma
                         </Button>
                     </ModalFooter>

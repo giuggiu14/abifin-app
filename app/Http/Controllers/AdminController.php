@@ -78,15 +78,12 @@ class AdminController extends Controller
     public function dashboard()
     {
         $user = Auth::user();
-        if ($user->isAdmin())
-        {
+        if ($user->isAdmin()) {
             return Inertia::render('admin/dashboard', [
                 'clients' => Client::orderBy('created_at', 'desc')->get(),
                 'paperworks' => Paperwork::orderBy('created_at', 'desc')->get(),
             ]);
-        }
-        else
-        {
+        } else {
             return Inertia::render('dashboard', [
                 'paperworks' => Paperwork::with('client')->orderBy('created_at', 'desc')->get(),
             ]);

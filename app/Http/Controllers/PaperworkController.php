@@ -13,17 +13,19 @@ class PaperworkController extends Controller
 {
     use AuthorizesRequests;
 
-    public function paperworks(Client $client) {
+    public function paperworks(Client $client)
+    {
         $this->authorize('viewAny', [Paperwork::class, $client]);
 
         $client->load('paperworks');
+
         return Inertia::render('paperwork/main', [
             'listPaperworks' => $client->paperworks,
             'client' => $client,
             'can' => [
                 'doActions' => Auth::user()->isAdmin(),
                 'create' => Auth::user()->can('create', Paperwork::class),
-            ]
+            ],
         ]);
     }
 
@@ -33,7 +35,7 @@ class PaperworkController extends Controller
 
         $validated = $request->validate([
             'title' => 'required',
-            'description' => ''
+            'description' => '',
         ]);
         $paperwork = new Paperwork($validated);
         $paperwork->client()->associate($client);
@@ -46,7 +48,7 @@ class PaperworkController extends Controller
 
         $validated = $request->validate([
             'title' => 'required',
-            'description' => ''
+            'description' => '',
         ]);
         $paperwork->update($validated);
     }

@@ -6,7 +6,6 @@ use App\Enums\UserRole;
 use App\Http\Middleware\EnsureUserIsAdmin;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
 
@@ -21,7 +20,7 @@ class AdminAccessTest extends TestCase
         // Define a test route that uses the EnsureUserIsAdmin middleware
         Route::get('/_test/admin', function () {
             return 'success';
-        }) -> middleware(EnsureUserIsAdmin::class);
+        })->middleware(EnsureUserIsAdmin::class);
     }
 
     public function test_block_non_admin_users()
@@ -30,8 +29,8 @@ class AdminAccessTest extends TestCase
         $this->assertFalse($user->isAdmin());
 
         $this->actingAs($user)
-             ->get('/_test/admin')
-             ->assertStatus(403);
+            ->get('/_test/admin')
+            ->assertStatus(403);
     }
 
     public function test_allow_admin_users()
@@ -40,8 +39,8 @@ class AdminAccessTest extends TestCase
         $this->assertTrue($user->isAdmin());
 
         $this->actingAs($user)
-             ->get('/_test/admin')
-             ->assertStatus(200)
-             ->assertSee('success');
+            ->get('/_test/admin')
+            ->assertStatus(200)
+            ->assertSee('success');
     }
 }
