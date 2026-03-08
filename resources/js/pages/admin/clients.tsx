@@ -3,10 +3,11 @@ import { clients } from "@/routes/admin";
 import { BreadcrumbItem } from "@/types";
 import { Client, columns } from "@/types/client";
 import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip, useDisclosure } from "@heroui/react";
-import { Head, useForm } from "@inertiajs/react";
-import { Eye, Plus, Trash2 } from "lucide-react";
+import { Head, router, useForm } from "@inertiajs/react";
+import { Eye, Paperclip, Plus, Trash2 } from "lucide-react";
 import { useCallback, useState } from "react";
-import { ClientForm } from "./createnew";
+import { ClientForm } from "./client";
+import { paperworks } from "@/routes";
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -55,6 +56,15 @@ export default function Clients({ listClients } : Readonly<{ listClients: Client
                                 }}
                             />
                         </Tooltip>
+                        <Tooltip color="primary" content="Vedi Pratiche Cliente">
+                            <Button
+                                color="primary"
+                                endContent={<Paperclip />}
+                                onPress={
+                                    () => router.visit(paperworks(item.id?item.id:0))
+                                }
+                            />
+                        </Tooltip>
                     </div>
                 );
         } else {
@@ -96,7 +106,7 @@ export default function Clients({ listClients } : Readonly<{ listClients: Client
     };
 
     return (
-         <AppLayout breadcrumbs={breadcrumbs}>
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Clients" />
             <div className="p-8 flex flex-col gap-4">
                 <div className="flex justify-end items-center">
