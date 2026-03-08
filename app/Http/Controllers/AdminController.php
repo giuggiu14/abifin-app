@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\UserRole;
 use App\Models\Client;
+use App\Models\Paperwork;
 use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
@@ -71,5 +72,13 @@ class AdminController extends Controller
     {
         $this->authorize('delete', $client);
         $client->delete();
+    }
+
+    public function dashboard()
+    {
+        return Inertia::render('admin/dashboard', [
+            'clients' => Client::orderBy('created_at', 'desc')->get(),
+            'paperworks' => Paperwork::orderBy('created_at', 'desc')->get(),
+        ]);
     }
 }

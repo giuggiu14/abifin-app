@@ -1,10 +1,10 @@
-import { Client } from "@/types/client";
+import { Client, ClientFormData } from "@/types/client";
 import { Button, Form, Input, ModalBody, ModalFooter } from "@heroui/react";
 import { useForm } from "@inertiajs/react";
 import { useEffect } from "react";
 
 interface ClientFormProps {
-    form: ReturnType<typeof useForm<Client>>;
+    form: ReturnType<typeof useForm<ClientFormData>>;
     initialData: Client | undefined;
     onSave: () => void;
     onClose: () => void;

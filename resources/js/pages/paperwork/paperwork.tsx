@@ -1,10 +1,10 @@
-import { Paperwork } from "@/types/paperwork";
+import { Paperwork, PaperworkFormData } from "@/types/paperwork";
 import { Button, Form, Input, ModalBody, ModalFooter, Textarea } from "@heroui/react";
 import { useForm } from "@inertiajs/react";
 import { useEffect } from "react";
 
 interface PaperworkFormProps {
-    form: ReturnType<typeof useForm<Paperwork>>;
+    form: ReturnType<typeof useForm<PaperworkFormData>>;
     initialData: Paperwork | undefined;
     onSave: () => void;
     onClose: () => void;

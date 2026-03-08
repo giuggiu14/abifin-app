@@ -13,9 +13,10 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard } from '@/routes';
 import type { NavItem } from '@/types';
 import { clients } from '@/routes/admin';
+
+const dashboard = () => '/dashboard';
 
 const mainNavItems: NavItem[] = [
     {
@@ -27,7 +28,7 @@ const mainNavItems: NavItem[] = [
         title: 'Clients',
         href: clients(),
         icon: UserRound,
-    }
+    },
 ];
 
 const footerNavItems: NavItem[] = [
