@@ -15,8 +15,7 @@ import {
 } from '@/components/ui/sidebar';
 import type { NavItem } from '@/types';
 import { clients } from '@/routes/admin';
-
-const dashboard = () => '/dashboard';
+import { dashboard } from '@/routes';
 
 const mainNavItems: NavItem[] = [
     {
