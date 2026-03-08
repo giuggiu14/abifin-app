@@ -1,7 +1,7 @@
 import AppLayout from "@/layouts/app-layout";
 import { clients } from "@/routes/admin";
 import { BreadcrumbItem } from "@/types";
-import { Client, columns } from "@/types/client";
+import { Client, ClientFormData, columns } from "@/types/client";
 import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip, useDisclosure } from "@heroui/react";
 import { Head, router, useForm } from "@inertiajs/react";
 import { Eye, Paperclip, Plus, Trash2 } from "lucide-react";
@@ -16,11 +16,11 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Clients({ listClients } : Readonly<{ listClients: Client[] }>) {
+export default function Clients({ listClients }: Readonly<{ listClients: Client[] }>) {
     const [selectedClient, setSelectedClient] = useState<Client | undefined>();
-    const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure();
+    const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
     const confirmDeleteModal = useDisclosure();
-    const form = useForm<Client>({
+    const form = useForm<ClientFormData>({
         company_name: '',
         email: '',
         address: '',
@@ -36,37 +36,37 @@ export default function Clients({ listClients } : Readonly<{ listClients: Client
     const renderCell = useCallback((item: Client, columnKey: React.Key) => {
         const cellValue = item[columnKey as keyof Client];
 
-        if (columnKey==="actions") {
+        if (columnKey === "actions") {
             return (
-                    <div className="relative flex items-center gap-2">
-                        <Tooltip content="Dettagli">
-                            <Button
-                                endContent={<Eye />}
-                                color="secondary"
-                                onPress={() => handleOpenModal(item)}
-                            />
-                        </Tooltip>
-                        <Tooltip color="danger" content="Elimina">
-                            <Button
-                                color="danger"
-                                endContent={<Trash2 />}
-                                onPress={() => {
-                                    setSelectedClient(item);
-                                    confirmDeleteModal.onOpen()
-                                }}
-                            />
-                        </Tooltip>
-                        <Tooltip color="primary" content="Vedi Pratiche Cliente">
-                            <Button
-                                color="primary"
-                                endContent={<Paperclip />}
-                                onPress={
-                                    () => router.visit(paperworks(item.id?item.id:0))
-                                }
-                            />
-                        </Tooltip>
-                    </div>
-                );
+                <div className="relative flex items-center gap-2">
+                    <Tooltip content="Dettagli">
+                        <Button
+                            endContent={<Eye />}
+                            color="secondary"
+                            onPress={() => handleOpenModal(item)}
+                        />
+                    </Tooltip>
+                    <Tooltip color="danger" content="Elimina">
+                        <Button
+                            color="danger"
+                            endContent={<Trash2 />}
+                            onPress={() => {
+                                setSelectedClient(item);
+                                confirmDeleteModal.onOpen()
+                            }}
+                        />
+                    </Tooltip>
+                    <Tooltip color="primary" content="Vedi Pratiche Cliente">
+                        <Button
+                            color="primary"
+                            endContent={<Paperclip />}
+                            onPress={
+                                () => router.visit(paperworks(item.id ? item.id : 0))
+                            }
+                        />
+                    </Tooltip>
+                </div>
+            );
         } else {
             return cellValue;
         }
@@ -77,7 +77,6 @@ export default function Clients({ listClients } : Readonly<{ listClients: Client
             console.log("Deleting...");
             form.delete(`/clients/${selectedClient.id}`, {
                 onSuccess: () => {
-                    console.log("Deleted");
                     confirmDeleteModal.onClose();
                 }
             });
@@ -86,15 +85,10 @@ export default function Clients({ listClients } : Readonly<{ listClients: Client
 
     const handleSave = () => {
         if (selectedClient) {
-            console.log("Inizio l'update");
             form.put(`/clients/${selectedClient.id}`, {
                 onSuccess: () => {
-                    console.log("Salvataggio terminato");
                     onClose();
                 },
-                onError: (err) => {
-                    console.log("Sono andato in errore: ", err);
-                }
             });
         } else {
             form.post('/clients', {
@@ -172,7 +166,7 @@ export default function Clients({ listClients } : Readonly<{ listClients: Client
                         </Button>
                         <Button
                             color="danger"
-                            onPress={ () => handleDelete() }
+                            onPress={() => handleDelete()}
                         >
                             Conferma
                         </Button>

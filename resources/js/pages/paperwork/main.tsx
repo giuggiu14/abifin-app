@@ -1,6 +1,6 @@
 import AppLayout from "@/layouts/app-layout";
 import { paperworks } from "@/routes";
-import { chipColors, columns, Paperwork } from "@/types/paperwork";
+import { chipColors, columns, Paperwork, PaperworkFormData } from "@/types/paperwork";
 import { Button, Chip, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip, useDisclosure } from "@heroui/react";
 import { Head, useForm } from "@inertiajs/react";
 import { Eye, Plus, Trash2 } from "lucide-react";
@@ -12,7 +12,7 @@ export default function Paperworks({ listPaperworks, client, can } : Readonly<{ 
     const [selectedPaperwork, setSelectedPaperwork] = useState<Paperwork | undefined>();
     const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure();
     const confirmDeleteModal = useDisclosure();
-    const form = useForm<Paperwork>({
+    const form = useForm<PaperworkFormData>({
         title: '',
     });
 

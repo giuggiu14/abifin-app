@@ -5,6 +5,7 @@ export interface Client {
     phone: string;
     address: string;
     vat_number: string;
+    created_at: string;
 }
 
 export const columns = [
@@ -37,3 +38,5 @@ export const columns = [
         label: ''
     },
 ];
+
+export type ClientFormData = Omit<Client, 'id' | 'created_at'>;

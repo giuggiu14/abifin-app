@@ -2,7 +2,8 @@ export interface Paperwork {
     id?: number;
     title: string;
     description?: string;
-    createdAt?: string;
+    createdAt: string;
+    status: 'open' | 'closed' | 'pending';
 };
 
 export const columns = [
@@ -37,3 +38,5 @@ export const chipColors: { [key: string]: "danger" | "success" | "warning" } = {
     closed: "success",
     pending: "warning",
 }
+
+export type PaperworkFormData = Omit<Paperwork, 'createdAt' | 'status'>;
