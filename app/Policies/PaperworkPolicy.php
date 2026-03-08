@@ -5,7 +5,6 @@ namespace App\Policies;
 use App\Models\Client;
 use App\Models\Paperwork;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class PaperworkPolicy
 {
