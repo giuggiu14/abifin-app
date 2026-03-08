@@ -64,8 +64,6 @@ class AdminController extends Controller
             } catch (\Exception $e) {
                 dd($e->getMessage());
             }
-
-            return back()->with('success', 'Dati aggiornati!');
         });
     }
 
@@ -73,6 +71,5 @@ class AdminController extends Controller
     {
         $this->authorize('delete', $client);
         $client->delete();
-        return back()->with('success', 'Dati aggiornati!');
     }
 }
