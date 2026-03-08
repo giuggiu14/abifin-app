@@ -2,7 +2,7 @@ import AppLayout from "@/layouts/app-layout";
 import { clients } from "@/routes/admin";
 import { BreadcrumbItem } from "@/types";
 import { Client, columns } from "@/types/client";
-import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip, useDisclosure, User } from "@heroui/react";
+import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip, useDisclosure } from "@heroui/react";
 import { Head, useForm } from "@inertiajs/react";
 import { Eye, Plus, Trash2 } from "lucide-react";
 import { useCallback, useState } from "react";
@@ -15,9 +15,8 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Clients({ listClients } : { listClients: Client[] }) {
+export default function Clients({ listClients } : Readonly<{ listClients: Client[] }>) {
     const [selectedClient, setSelectedClient] = useState<Client | undefined>();
-    const [isLoading, setIsLoading] = useState(false);
     const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure();
     const confirmDeleteModal = useDisclosure();
     const form = useForm<Client>({
@@ -28,12 +27,16 @@ export default function Clients({ listClients } : { listClients: Client[] }) {
         vat_number: '',
     });
 
+    const handleOpenModal = (client?: Client) => {
+        setSelectedClient(client);
+        onOpen();
+    };
+
     const renderCell = useCallback((item: Client, columnKey: React.Key) => {
         const cellValue = item[columnKey as keyof Client];
 
-        switch (columnKey) {
-            case "actions":
-                return (
+        if (columnKey==="actions") {
+            return (
                     <div className="relative flex items-center gap-2">
                         <Tooltip content="Dettagli">
                             <Button
@@ -54,15 +57,10 @@ export default function Clients({ listClients } : { listClients: Client[] }) {
                         </Tooltip>
                     </div>
                 );
-            default:
-                return cellValue;
+        } else {
+            return cellValue;
         }
     }, []);
-
-    const handleOpenModal = (client?: Client) => {
-        setSelectedClient(client);
-        onOpen();
-    };
 
     const handleDelete = () => {
         if (selectedClient) {
@@ -120,7 +118,6 @@ export default function Clients({ listClients } : { listClients: Client[] }) {
                         items={listClients}
                         emptyContent="Nessun cliente trovato"
                         loadingContent={<Spinner label="Loading..." />}
-                        isLoading={isLoading}
                     >
                         {(item) => (
                             <TableRow key={item.id}>
