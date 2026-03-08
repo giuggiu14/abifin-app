@@ -19,7 +19,11 @@ class PaperworkController extends Controller
         $client->load('paperworks');
         return Inertia::render('paperwork/main', [
             'listPaperworks' => $client->paperworks,
-            'client' => $client
+            'client' => $client,
+            'can' => [
+                'doActions' => Auth::user()->isAdmin(),
+                'create' => Auth::user()->can('create', Paperwork::class),
+            ]
         ]);
     }
 

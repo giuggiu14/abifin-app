@@ -8,7 +8,7 @@ import { useCallback, useState } from "react";
 import { PaperworkForm } from "./paperwork";
 import { Client } from "@/types/client";
 
-export default function Paperworks({ listPaperworks, client } : Readonly<{ listPaperworks: Paperwork[], client: Client }>) {
+export default function Paperworks({ listPaperworks, client, can } : Readonly<{ listPaperworks: Paperwork[], client: Client, can: { doActions: boolean, create: boolean } }>) {
     const [selectedPaperwork, setSelectedPaperwork] = useState<Paperwork | undefined>();
     const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure();
     const confirmDeleteModal = useDisclosure();
@@ -26,28 +26,28 @@ export default function Paperworks({ listPaperworks, client } : Readonly<{ listP
     const renderCell = useCallback((item: Paperwork, columnKey: React.Key) => {
         const cellValue = item[columnKey as keyof Paperwork];
 
-        if (columnKey==="actions") {
+        if (columnKey==="actions" && can.doActions) {
             return (
-                    <div className="relative flex items-center gap-2">
-                        <Tooltip content="Dettagli">
-                            <Button
-                                endContent={<Eye />}
-                                color="secondary"
-                                onPress={() => handleOpenModal(item)}
-                            />
-                        </Tooltip>
-                        <Tooltip color="danger" content="Elimina">
-                            <Button
-                                color="danger"
-                                endContent={<Trash2 />}
-                                onPress={() => {
-                                    setSelectedPaperwork(item);
-                                    confirmDeleteModal.onOpen()
-                                }}
-                            />
-                        </Tooltip>
-                    </div>
-                );
+                <div className="relative flex items-center gap-2">
+                    <Tooltip content="Dettagli">
+                        <Button
+                            endContent={<Eye />}
+                            color="secondary"
+                            onPress={() => handleOpenModal(item)}
+                        />
+                    </Tooltip>
+                    <Tooltip color="danger" content="Elimina">
+                        <Button
+                            color="danger"
+                            endContent={<Trash2 />}
+                            onPress={() => {
+                                setSelectedPaperwork(item);
+                                confirmDeleteModal.onOpen()
+                            }}
+                        />
+                    </Tooltip>
+                </div>
+            );
         } else if (columnKey === "status") {
             return (
                 <Chip
@@ -92,17 +92,21 @@ export default function Paperworks({ listPaperworks, client } : Readonly<{ listP
         <AppLayout>
             <Head title="Pratiche" />
             <div className="p-8 flex flex-col gap-4">
-                <div className="flex justify-end items-center">
-                    <div className="flex gap-3">
-                        <Button
-                            color="primary"
-                            endContent={<Plus />}
-                            onPress={() => handleOpenModal()}
-                        >
-                            Add
-                        </Button>
-                    </div>
-                </div>
+                {
+                    can.create && (
+                        <div className="flex justify-end items-center">
+                            <div className="flex gap-3">
+                                <Button
+                                    color="primary"
+                                    endContent={<Plus />}
+                                    onPress={() => handleOpenModal()}
+                                >
+                                    Add
+                                </Button>
+                            </div>
+                        </div>
+                    )
+                }
                 <Table aria-label="Tabella Pratiche">
                     <TableHeader columns={columns}>
                         {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
