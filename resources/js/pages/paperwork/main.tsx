@@ -1,40 +1,30 @@
 import AppLayout from "@/layouts/app-layout";
-import { clients } from "@/routes/admin";
-import { BreadcrumbItem } from "@/types";
-import { Client, columns } from "@/types/client";
-import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip, useDisclosure } from "@heroui/react";
-import { Head, router, useForm } from "@inertiajs/react";
-import { Eye, Paperclip, Plus, Trash2 } from "lucide-react";
-import { useCallback, useState } from "react";
-import { ClientForm } from "./client";
 import { paperworks } from "@/routes";
+import { chipColors, columns, Paperwork } from "@/types/paperwork";
+import { Button, Chip, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip, useDisclosure } from "@heroui/react";
+import { Head, useForm } from "@inertiajs/react";
+import { Eye, Plus, Trash2 } from "lucide-react";
+import { useCallback, useState } from "react";
+import { PaperworkForm } from "./paperwork";
+import { Client } from "@/types/client";
 
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Clients',
-        href: clients(),
-    },
-];
-
-export default function Clients({ listClients } : Readonly<{ listClients: Client[] }>) {
-    const [selectedClient, setSelectedClient] = useState<Client | undefined>();
+export default function Paperworks({ listPaperworks, client } : Readonly<{ listPaperworks: Paperwork[], client: Client }>) {
+    const [selectedPaperwork, setSelectedPaperwork] = useState<Paperwork | undefined>();
     const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure();
     const confirmDeleteModal = useDisclosure();
-    const form = useForm<Client>({
-        company_name: '',
-        email: '',
-        address: '',
-        phone: '',
-        vat_number: '',
+    const form = useForm<Paperwork>({
+        title: '',
     });
 
-    const handleOpenModal = (client?: Client) => {
-        setSelectedClient(client);
+    const basePath = paperworks(client.id?client.id:0).url;
+
+    const handleOpenModal = (paperwork?: Paperwork) => {
+        setSelectedPaperwork(paperwork);
         onOpen();
     };
 
-    const renderCell = useCallback((item: Client, columnKey: React.Key) => {
-        const cellValue = item[columnKey as keyof Client];
+    const renderCell = useCallback((item: Paperwork, columnKey: React.Key) => {
+        const cellValue = item[columnKey as keyof Paperwork];
 
         if (columnKey==="actions") {
             return (
@@ -51,33 +41,31 @@ export default function Clients({ listClients } : Readonly<{ listClients: Client
                                 color="danger"
                                 endContent={<Trash2 />}
                                 onPress={() => {
-                                    setSelectedClient(item);
+                                    setSelectedPaperwork(item);
                                     confirmDeleteModal.onOpen()
                                 }}
                             />
                         </Tooltip>
-                        <Tooltip color="primary" content="Vedi Pratiche Cliente">
-                            <Button
-                                color="primary"
-                                endContent={<Paperclip />}
-                                onPress={
-                                    () => router.visit(paperworks(item.id?item.id:0))
-                                }
-                            />
-                        </Tooltip>
                     </div>
                 );
+        } else if (columnKey === "status") {
+            return (
+                <Chip
+                    color={chipColors[cellValue as keyof typeof chipColors]}
+                    variant="flat"
+                >
+                    {cellValue?.toString().toUpperCase()}
+                </Chip>
+            );
         } else {
             return cellValue;
         }
     }, []);
 
     const handleDelete = () => {
-        if (selectedClient) {
-            console.log("Deleting...");
-            form.delete(`/clients/${selectedClient.id}`, {
+        if (selectedPaperwork) {
+            form.delete(`${basePath}/${selectedPaperwork.id}`, {
                 onSuccess: () => {
-                    console.log("Deleted");
                     confirmDeleteModal.onClose();
                 }
             });
@@ -85,19 +73,14 @@ export default function Clients({ listClients } : Readonly<{ listClients: Client
     }
 
     const handleSave = () => {
-        if (selectedClient) {
-            console.log("Inizio l'update");
-            form.put(`/clients/${selectedClient.id}`, {
+        if (selectedPaperwork) {
+            form.put(`${basePath}/${selectedPaperwork.id}`, {
                 onSuccess: () => {
-                    console.log("Salvataggio terminato");
                     onClose();
                 },
-                onError: (err) => {
-                    console.log("Sono andato in errore: ", err);
-                }
             });
         } else {
-            form.post('/clients', {
+            form.post(basePath, {
                 onSuccess: () => {
                     onClose();
                 }
@@ -106,8 +89,8 @@ export default function Clients({ listClients } : Readonly<{ listClients: Client
     };
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Clients" />
+        <AppLayout>
+            <Head title="Pratiche" />
             <div className="p-8 flex flex-col gap-4">
                 <div className="flex justify-end items-center">
                     <div className="flex gap-3">
@@ -120,13 +103,13 @@ export default function Clients({ listClients } : Readonly<{ listClients: Client
                         </Button>
                     </div>
                 </div>
-                <Table aria-label="Tabella clienti">
+                <Table aria-label="Tabella Pratiche">
                     <TableHeader columns={columns}>
                         {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
                     </TableHeader>
                     <TableBody
-                        items={listClients}
-                        emptyContent="Nessun cliente trovato"
+                        items={listPaperworks}
+                        emptyContent="Nessun paperwork trovato"
                         loadingContent={<Spinner label="Loading..." />}
                     >
                         {(item) => (
@@ -144,12 +127,12 @@ export default function Clients({ listClients } : Readonly<{ listClients: Client
                 <ModalContent>
                     {(onClose) => (
                         <>
-                            <ModalHeader>{selectedClient ? "Modifica" : "Nuovo"} Cliente</ModalHeader>
-                            <ClientForm
+                            <ModalHeader>{selectedPaperwork ? "Modifica" : "Nuovo"} Pratica</ModalHeader>
+                            <PaperworkForm
                                 form={form}
-                                initialData={selectedClient}
-                                onSave={handleSave}
+                                initialData={selectedPaperwork}
                                 onClose={onClose}
+                                onSave={handleSave}
                             />
                         </>
                     )}
