@@ -14,7 +14,7 @@ class PaperworkSeeder extends Seeder
     public function run(): void
     {
         Paperwork::factory()->count(1000)->create([
-            'client_id' => fn() => Client::inRandomOrder()->first()->id,
+            'client_id' => fn () => Client::inRandomOrder()->first()->id,
         ]);
     }
 }
