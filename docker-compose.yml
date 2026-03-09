@@ -1,9 +1,32 @@
 services:
-    db:
-      image: postgres:17
-      ports:
-        - "5432:5432"
-      environment:
-        POSTGRES_DB: '${DB_DATABASE}'
-        POSTGRES_USERNAME: '${DB_USERNAME}'
-        POSTGRES_PASSWORD: '${DB_PASSWORD}'
+  db:
+    image: postgres:17
+    env_file:
+      -  .env
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: '${DB_DATABASE}'
+      POSTGRES_USERNAME: '${DB_USERNAME}'
+      POSTGRES_PASSWORD: '${DB_PASSWORD}'
+
+  app:
+    build: .
+    volumes:
+      - .:/var/www/html
+    ports:
+      - "8000:8000"
+      - "5173:5173"
+    env_file:
+      - .env
+    command: >
+      sh -c "composer install && 
+             npm install && 
+             php artisan migrate &&
+             if [ \"$RUN_ALL_SEEDS\" = \"true\" ]; then 
+              php artisan db:seed; 
+             else
+              php artisan db:seed --class=UserSeeder; 
+             fi &&
+             php artisan serve --host=0.0.0.0 --port=8000 & 
+             npm run dev -- --host"
